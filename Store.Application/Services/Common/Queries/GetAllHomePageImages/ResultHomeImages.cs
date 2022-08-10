@@ -1,0 +1,15 @@
+﻿using Store.Application.Services.Common.Queries.GetHomeImages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Store.Application.Services.Common.Queries.GetHomeImages
+{
+  public  class ResultHomeImages
+    {
+        public int TotalRow { get; set; }
+        public List<HomePageImageDto> HomeImages { get; set; }
+    }
+}

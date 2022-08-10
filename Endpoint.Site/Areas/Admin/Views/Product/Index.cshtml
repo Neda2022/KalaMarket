@@ -1,0 +1,266 @@
+﻿@addTagHelper *, LazZiya.TagHelpers
+@using Store.Application.Services.Products.Queries.GetProductForAdmin;
+@model ProductForAdminDto;
+
+@{
+    ViewData["Title"] = "لیست محصولات";
+    Layout = "~/Areas/Admin/Views/Shared/_Adminlayout.cshtml";
+}
+
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <!-- Zero configuration table -->
+        <section id="configuration">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-body collapse show">
+                            <div class="card-block card-dashboard">
+                                <p class="card-text">لیست محصولات</p>
+                                <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+                                    <div class="col-sm-12">
+                                        <table class="table table-striped table-bordered zero-configuration dataTable" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="sorting_asc">نام</th>
+                                                    <th class="sorting_asc">دسته بندی</th>
+                                                    <th class="sorting_asc">برند </th>
+                                                    <th class="sorting_asc">قیمت </th>
+                                                    <th class="sorting_asc">موجودی </th>
+                                                    <th class="sorting_asc">نمایش در سایت؟ </th>
+                                                </tr>
+                                            </thead>
+                                                <tbody>
+
+                                                @foreach (var item in Model.Products)
+                                                {
+                                                    <tr role="row">
+                                                        <td>@item.Name</td>
+                                                        <td>@item.Category</td>
+                                                        <td>@item.Brand</td>
+                                                        <td>@item.Price.ToString("n0")</td>
+                                                        <td>@item.Inventory</td>
+                                                        <td>@item.Displayed</td>
+                                                        <td>
+
+
+                                                            <a class="btn btn-info" onclick="ShowModalEdituser('@item.Id', '@item.Name', '@item.Brand', '@item.Inventory', '@item.Price')">ویرایش</a>
+                                                            <a class="btn btn-danger" onclick="DeleteUser('@item.Id')">حذف</a>
+                                                            <a href="~/admin/product/detail/@item.Id" class="btn btn-green">جزئیات</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="  text-center">
+                                    
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts
+{
+
+    <script src="~/Sweetalert2/sweetalert2.all.min.js"></script>
+    <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    
+}
+
+<script>
+
+    function DeleteUser(Id) {
+        swal.fire({
+            title: 'حذف محصول',
+            text: "کاربر گرامی از حذف محصول مطمئن هستید؟",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#7cacbe',
+            confirmButtonText: 'بله ، محصول حذف شود',
+            cancelButtonText: 'خیر'
+        }).then((result) => {
+            if (result.value) {
+                var postData = {
+                    'Id': Id,
+                };
+
+                $.ajax({
+                    contentType: 'application/x-www-form-urlencoded',
+                    dataType: 'json',
+                    type: "POST",
+                    url: "Delete",
+                    data: postData,
+                    success: function (data) {
+                        if (data.success == true) {
+                            swal.fire(
+                                'موفق!',
+                                data.message,
+                                'success'
+                            ).then(function (isConfirm) {
+                                location.reload();
+                            });
+                        }
+                        else {
+
+                            swal.fire(
+                                'هشدار!',
+                                data.message,
+                                'warning'
+                            );
+
+                        }
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+
+                });
+
+            }
+        })
+    }
+
+
+    function Edituser() {
+
+        var id = $("#Edit_Id").val();
+        var name = $("#Edit_Name").val();
+        var brand = $("#Edit_Brand").val();
+        var inventory = $("#Edit_Inventory").val();
+        var price = $("#Edit_Price").val();
+
+
+
+
+        var postData = {
+            'Id': id,
+            'Name': name,
+            'brand': brand,
+            'inventory': inventory,
+            'price': price,
+
+
+
+        };
+
+
+        $.ajax({
+            contentType: 'application/x-www-form-urlencoded',
+            dataType: 'json',
+            type: "POST",
+            url: "Edit",
+            data: postData,
+            success: function (data) {
+                if (data.success == true) {
+                    swal.fire(
+                        'موفق!',
+                        data.message,
+                        'success'
+                    ).then(function (isConfirm) {
+                        location.reload();
+                    });
+                }
+                else {
+                    swal.fire(
+                        'هشدار!',
+                        data.message,
+                        'warning'
+                    );
+                }
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+            }
+        });
+
+        $('#EditUser').modal('hide');
+
+    }
+
+
+    function ShowModalEdituser(Id, Name, Brand,  Inventory, Price) {
+        $('#Edit_Name').val(Name)
+        $('#Edit_Id').val(Id)
+        $("#Edit_Brand").val(Brand);
+        $("#Edit_Inventory").val(Inventory);
+        $("#Edit_Price").val(Price);
+
+
+        $('#EditUser').modal('show');
+
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+@section Modals
+{
+    <!-- Modal Edit User -->
+    <div class="modal fade" id="EditUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">ویرایش دسته بندی</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-xl-12 col-lg-12 col-md-12 mb-1">
+                        <fieldset class="form-group">
+                            <input type="hidden" id="Edit_Id" />
+                            <label for="basicInput">نام محصول</label>
+                            <input type="text" class="form-control" id="Edit_Name">
+                        </fieldset>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 mb-1">
+                        <fieldset class="form-group">
+                            <input type="hidden" id="Edit_Id" />
+                            <label for="basicInput">برند محصول</label>
+                            <input type="text" class="form-control" id="Edit_Brand">
+                        </fieldset>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 mb-1">
+                        <fieldset class="form-group">
+                            <input type="hidden" id="Edit_Id" />
+                            <label for="basicInput">موجودی انبار </label>
+                            <input type="text" class="form-control" id="Edit_Inventory">
+                        </fieldset>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 mb-1">
+                        <fieldset class="form-group">
+                            <input type="hidden" id="Edit_Id" />
+                            <label for="basicInput">قیمت</label>
+                            <input type="text" class="form-control" id="Edit_Price">
+                        </fieldset>
+                    </div>
+                  
+
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-secondary" data-dismiss="modal">بستن</a>
+                    <a class="btn btn-primary" onclick="Edituser()">اعمال تغییرات</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

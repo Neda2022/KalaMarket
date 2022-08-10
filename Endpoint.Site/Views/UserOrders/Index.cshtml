@@ -1,0 +1,90 @@
+﻿@using Store.Application.Services.Orders.Query.GetUserOrder;
+@model List<GetUserOrderDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutUserPanel.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <!-- Zero configuration table -->
+        <section id="configuration">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title-wrap bar-success">
+                            </div>
+                        </div>
+                        <div class="card-body collapse show">
+                            <div class="card-block card-dashboard">
+                                <p class="card-text">تاریخچه سفارشات</p>
+
+                                <form method="get" class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                    <fieldset class="form-group">
+                                        <input type="text" class="form-control" name="serchkey">
+                                        <button class="btn btn-success">جستجو</button>
+                                    </fieldset>
+                                </form>
+
+                                <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+                                    <div class="col-sm-12">
+                                        <table class="table table-striped table-bordered zero-configuration dataTable" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="شماره سفارش: activate to sort column descending" style="width: 222px;">شماره سفارش</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="شماره فاکتور: activate to sort column ascending" style="width: 401px;">شماره فاکتور</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="وضعیت سفارش: activate to sort column ascending" style="width: 401px;">وضعیت سفارش</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="محصولات در این سفارش: activate to sort column ascending" style="width: 401px;">محصولات در این سفارش</th>
+
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @foreach (var item in Model)
+                                                {
+                                                    <tr role="row" class="odd">
+                                                        <td class="sorting_1">@item.OrderId</td>
+                                                        <td>@item.RequestPayId</td>
+                                                        <td>@item.orderState</td>
+
+                                                        <td>
+                                                            <table>
+                                                                @foreach (var detail in item.OrderDetails)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@detail.ProductName</td>
+                                                                        <td>@detail.Price</td>
+                                                                        <td>@detail.Count</td>
+
+
+
+                                                                    </tr>
+
+                                                                }
+                                                            </table>
+
+                                                        </td>
+
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+</div>
+
